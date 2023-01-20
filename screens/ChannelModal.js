@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#36393e',
     padding: 10,
     width,
+    height: height / 2,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -112,6 +113,9 @@ function ChannelModal({
   const handleDeleteServer = () => {
     if (channel !== 1) {
       axios.delete(`http://${Constants.manifest?.extra?.apiUrl}/channels/${channel}`)
+        .then(() => {
+          setChannelModal(!channelModal);
+        })
         .catch((err) => {
           console.log('error deleting', err);
         });
@@ -125,7 +129,11 @@ function ChannelModal({
       axios.put(`http://${Constants.manifest?.extra?.apiUrl}/channels/${channel}`, {
         channel_name: newChannelName,
       })
+        .then(() => {
+          setChannelModal(!channelModal);
+        })
         .catch((err) => {
+          setChannelModal(!channelModal);
           console.log('error renaming', err);
         });
     } else {
@@ -152,7 +160,7 @@ function ChannelModal({
           directionalLockEnabled
           // centerContent={true}
           contentInset={{
-            top: height, left: 0, bottom: 0, right: 0,
+            top: height / 2, left: 0, bottom: 0, right: 0,
           }}
           onScrollEndDrag={() => setChannelModal(!channelModal)}
         >
@@ -176,7 +184,7 @@ function ChannelModal({
                 </TouchableOpacity>
               </View>
               <View>
-                <Text>Enter new server name</Text>
+                <Text>Enter new server name before hitting change name</Text>
                 <TextInput
                   style={styles.input}
                   onChangeText={(text) => setNewChannelName(text)}

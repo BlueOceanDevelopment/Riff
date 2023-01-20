@@ -186,7 +186,7 @@ const ChatScreen = ({server, channel}) => {
               {showButton && (
                 <TouchableOpacity onPress={sendMessage}>
                   <View style={styles.sendButton}>
-                    <Text style={styles.send}>></Text>
+                    <Text style={styles.send}>{'>'}</Text>
                   </View>
                 </TouchableOpacity>
               )}

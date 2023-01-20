@@ -72,7 +72,6 @@ const ChatScreen = ({server, channel, channelName}) => {
   }
 
   useEffect(() => {
-    console.log('server is : ' + serverID + ' and channel is ' + channelID);
     socket.on('new_message', updateMessages)
     return () => socket.off('new message')
   }, [ socket ]);
@@ -292,7 +291,6 @@ const LeftDrawerContent = ({getServers, servers, setServer, server, setChannel, 
 
   const onRefresh = () => {
     setRefreshing(true);
-    console.log("Getting servers")
     axios.get(`http://${Constants.manifest?.extra?.apiUrl}/servers/${userId}`)
     .then(response => {
       setServers(response.data);
@@ -487,10 +485,8 @@ const LeftDrawerScreen = ({setDrawerStatus, navigation}) => {
   }, [])
 
   const getServers = () => {
-    console.log("Getting servers")
     axios.get(`http://${Constants.manifest?.extra?.apiUrl}/servers/${userId}`)
     .then(response => {
-      console.log(response.data);
       setServers(response.data);
     })
     .catch(error => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   SectionList,
   SafeAreaView,
   Modal,
+  TextInput,
   TouchableWithoutFeedback,
 } from 'react-native';
 import axios from 'axios';
@@ -93,11 +94,21 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     height: height / 2,
   },
+  input: {
+    padding: 10,
+    fontSize: 18,
+    borderRadius: 6,
+    width: width * .8,
+    marginBottom: 20,
+    backgroundColor: '#202225',
+    color: '#fff'
+  },
 });
 
 function ChannelModal({
   channelModal, setChannelModal, channelName, channel,
 }) {
+  const [newChannelName, setNewChannelName] = useState('');
   const handleDeleteServer = () => {
     if (channel !== 1) {
       axios.delete(`http://${Constants.manifest?.extra?.apiUrl}/channels/${channel}`)
@@ -111,7 +122,9 @@ function ChannelModal({
 
   const handleRenameServer = () => {
     if (channel !== 1) {
-      axios.put(`http://${Constants.manifest?.extra?.apiUrl}/channels/${channel}`)
+      axios.put(`http://${Constants.manifest?.extra?.apiUrl}/channels/${channel}`, {
+        channel_name: newChannelName,
+      })
         .catch((err) => {
           console.log('error renaming', err);
         });
@@ -151,7 +164,7 @@ function ChannelModal({
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={[styles.button, styles.buttonInteractive]}
-                  onPress={() => handleRenameServer}
+                  onPress={() => handleRenameServer()}
                 >
                   <Text style={styles.textStyle}>Change name</Text>
                 </TouchableOpacity>
@@ -161,6 +174,14 @@ function ChannelModal({
                 >
                   <Text style={styles.textStyle}>Delete</Text>
                 </TouchableOpacity>
+              </View>
+              <View>
+                <Text>Enter new server name</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={(text) => setNewChannelName(text)}
+                  value={newChannelName}
+                />
               </View>
             </View>
           </View>

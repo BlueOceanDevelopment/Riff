@@ -223,6 +223,7 @@ const LeftDrawerContent = ({getServers, servers, setServer, server, setChannel, 
   const [modalVisible, setModalVisible] = useState(false);
   const [channels, setChannels] = useState([])
   const [refreshing, setRefreshing] = useState(false);
+  const [serverAdmin, setServerAdmin] = useState(0);
 
   useEffect(() => {
     loadDms(userId);
@@ -231,6 +232,7 @@ const LeftDrawerContent = ({getServers, servers, setServer, server, setChannel, 
   const loadChannels = (server) => {
     axios.get(`http://${Constants.manifest?.extra?.apiUrl}/channels/${server.id}`)
       .then(response => {
+        setServerAdmin(server.admin_id);
         setChannels(response.data);
         setServer(server.id);
         setChannel(response.data[0].id)
@@ -257,9 +259,11 @@ const LeftDrawerContent = ({getServers, servers, setServer, server, setChannel, 
   }
 
   const longPressChannel = (channel) => {
-    setChannelModal(!channelModal)
-    setChannelName(channel.channel_name)
-    setChannel(channel.id)
+    if(serverAdmin === userId) {
+      setChannelModal(!channelModal)
+      setChannelName(channel.channel_name)
+      setChannel(channel.id)
+    }
   }
 
   const loadDms = (id) => {
@@ -298,6 +302,8 @@ const LeftDrawerContent = ({getServers, servers, setServer, server, setChannel, 
       console.log('Error getting servers ', error.message);
     });
   };
+
+  // console.log(server);
 
   return (
     <ScrollView
@@ -370,7 +376,9 @@ const LeftDrawerContent = ({getServers, servers, setServer, server, setChannel, 
                       backgroundColor: pressed ? '#494d54' : '#36393e',
                     },
                     styles.item,
-                  ]} onPress={() => loadChannel(channel)} onLongPress={() => longPressChannel(channel)}>
+                  ]} onPress={() => loadChannel(channel)} onLongPress={() =>
+                    longPressChannel(channel)
+                  }>
                     <Text style={styles.title}>{`# ${channel.channel_name}`}</Text>
                   </Pressable>)
                 })
@@ -482,6 +490,7 @@ const LeftDrawerScreen = ({setDrawerStatus, navigation}) => {
     console.log("Getting servers")
     axios.get(`http://${Constants.manifest?.extra?.apiUrl}/servers/${userId}`)
     .then(response => {
+      console.log(response.data);
       setServers(response.data);
     })
     .catch(error => {

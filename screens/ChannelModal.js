@@ -12,6 +12,8 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from 'react-native';
+import axios from 'axios';
+import Constants from 'expo-constants';
 
 const { width, height } = Dimensions.get('window');
 
@@ -96,6 +98,28 @@ const styles = StyleSheet.create({
 function ChannelModal({
   channelModal, setChannelModal, channelName, channel,
 }) {
+  const handleDeleteServer = () => {
+    if (channel !== 1) {
+      axios.delete(`http://${Constants.manifest?.extra?.apiUrl}/channels/${channel}`)
+        .catch((err) => {
+          console.log('error deleting', err);
+        });
+    } else {
+      console.log('Cannot delete general');
+    }
+  };
+
+  const handleRenameServer = () => {
+    if (channel !== 1) {
+      axios.put(`http://${Constants.manifest?.extra?.apiUrl}/channels/${channel}`)
+        .catch((err) => {
+          console.log('error renaming', err);
+        });
+    } else {
+      console.log('Cannot delete general');
+    }
+  };
+
   return !channelModal ? null : (
     <Modal
       animationType="slide"
@@ -115,9 +139,9 @@ function ChannelModal({
           directionalLockEnabled
           // centerContent={true}
           contentInset={{
-            top: height / 2, left: 0, bottom: 0, right: 0,
+            top: height, left: 0, bottom: 0, right: 0,
           }}
-          onScrollEndDrag={() => setModalVisible(!modalVisible)}
+          onScrollEndDrag={() => setChannelModal(!channelModal)}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
@@ -127,13 +151,13 @@ function ChannelModal({
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={[styles.button, styles.buttonInteractive]}
-                  onPress={() => console.log('clicked')}
+                  onPress={() => handleRenameServer}
                 >
                   <Text style={styles.textStyle}>Change name</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.button, styles.buttonInteractive]}
-                  onPress={() => console.log('clicked')}
+                  onPress={() => handleDeleteServer()}
                 >
                   <Text style={styles.textStyle}>Delete</Text>
                 </TouchableOpacity>
